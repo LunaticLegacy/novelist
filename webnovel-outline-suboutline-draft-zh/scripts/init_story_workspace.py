@@ -16,6 +16,7 @@ PROJECT_README = """# 项目说明
 5. 同步维护设定集（04）
 6. 记录并统计长线伏笔（05、06）
 7. 维护当前角色状态与行动模式（07）
+8. 维护每章读者面信息控制（09）
 
 建议每次开工前后执行：
 - 写前体检：`python scripts/narrative_engine.py doctor --project .`
@@ -29,6 +30,7 @@ FILE_TEMPLATE_MAP = {
     "04-设定集.md": "setting-bible-template.md",
     "05-长线伏笔.csv": "foreshadow-template.csv",
     "07-当前角色状态.md": "character-state-template.md",
+    "09-读者面信息.md": "reader-info-template.md",
 }
 
 CHAPTERS_DIR = "正文"

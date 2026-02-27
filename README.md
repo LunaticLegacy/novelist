@@ -50,6 +50,7 @@ python webnovel-outline-suboutline-draft-zh/scripts/init_story_workspace.py --ro
 - `正文/第NNN章.md`
 - `04-设定集.md`
 - `05-长线伏笔.csv`
+- `09-读者面信息.md`
 
 4. 使用叙事引擎命令形成闭环：
 

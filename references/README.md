@@ -1,0 +1,1 @@
+Powered by: https://github.com/PenglongHuang/chinese-novelist-skill.git

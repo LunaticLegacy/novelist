@@ -1,6 +1,6 @@
 ---
 name: webnovel-outline-suboutline-draft-zh
-description: 使用中文推进网文创作的分层工作流：先生成总大纲，再拆解子大纲，基于风格参考提炼风格卡后产出正文，并在同一项目文件夹内同步维护设定集、角色状态与长线伏笔统计。当用户要求写网文、扩写章节、搭建剧情结构、保持文风一致、按样文仿写风格、维护世界观设定、维护角色行动逻辑或追踪伏笔回收时使用此技能。
+description: 使用中文推进网文创作的分层工作流与章节门禁引擎：先生成总大纲，再拆解子大纲，基于风格参考提炼风格卡后产出正文，并在同一项目文件夹内同步维护设定集、角色状态与长线伏笔统计。支持通过 scripts/narrative_engine.py 执行项目体检、章节上下文生成、交付前门禁验收。当用户要求写网文、扩写章节、搭建剧情结构、保持文风一致、按样文仿写风格、维护世界观设定、维护角色行动逻辑或追踪伏笔回收时使用此技能。
 ---
 
 # 网文分层写作（中文）
@@ -35,6 +35,49 @@ python scripts/init_story_workspace.py --root <父目录> --name <作品名>
 - `风格参考/02-风格卡.md`
 - `正文/`（正文章节目录）
 - `正文/第001章.md`（首章模板）
+
+初始化后，先执行一次项目体检：
+
+```bash
+python scripts/narrative_engine.py doctor --project <项目目录>
+```
+
+## 叙事引擎入口命令（必须执行）
+以下命令组成“写前准备 -> 成稿验收”的强制闭环：
+
+1) 项目体检（每次开工前）
+
+```bash
+python scripts/narrative_engine.py doctor --project <项目目录>
+```
+
+2) 生成本章上下文（写章前）
+
+```bash
+python scripts/narrative_engine.py context --project <项目目录> --chapter <章节号> --create-chapter
+```
+
+生成文件：`正文/.engine/第NNN章-上下文.md`，其中包含：
+- 本章子大纲摘录
+- 上一章结尾参考
+- 活跃伏笔清单
+- 角色行动记录（最近5条）
+
+3) 章节门禁验收（交付前）
+
+```bash
+python scripts/narrative_engine.py gate --project <项目目录> --chapter <章节号>
+```
+
+门禁会自动：
+- 刷新 `06-长线统计.md`
+- 生成 `08-叙事引擎报告.md`
+- 对“占位符未清理、子大纲缺失、伏笔ID未登记、角色状态未回写”等问题给出 FAIL/WARN/PASS
+
+### 门禁规则
+- 只要出现 `FAIL`，该章不得交付，必须修复后重跑 `gate`。
+- `WARN` 允许交付，但需要在“本轮同步更新”中说明风险。
+- 如果用户明确要求“先看草稿”，可先给草稿，但必须标注“未过门禁”。
 
 ## 标准流程
 
@@ -71,6 +114,7 @@ python scripts/init_story_workspace.py --root <父目录> --name <作品名>
 - 对话密集场景优先读取 `references/writing-techniques/dialogue-writing.md`。
 - 需要扩写时读取 `references/writing-techniques/content-expansion.md`。
 - 完稿前读取 `references/writing-techniques/quality-checklist.md` 与 `references/writing-techniques/consistency.md` 做自检。
+- 写作前必须先跑一次 `narrative_engine.py context` 生成本章上下文。
 
 ### 5) 更新设定集
 按 `references/setting-bible-template.md` 同步维护：
@@ -93,11 +137,22 @@ python scripts/foreshadow_stats.py --csv <项目目录>/05-长线伏笔.csv --ou
 
 ### 7) 更新角色状态与行动模式
 每章写作前后都手动更新 `07-当前角色状态.md`，模板使用 `references/character-state-template.md`：
-- 至少维护四类必填信息：健康状态、当前行动规划模式、下一步行动模式、当前角色知晓情报。
+- 至少维护四类必填信息：健康状态、当前行动规划模式、下一步行动模式、角色记忆、当前角色知晓情报。
 - 行动模式优先从模板中的“行动模式词典”选取；新增模式时补充“用途/进入条件/退出条件”。
 - 每次模式切换都要记录触发条件与目标，避免角色行为跳变。
 - 角色健康或情报变化若影响世界观硬设定，需同步回写 `04-设定集.md`。
 
+### 8) 章节门禁与交付
+每章交付前必须运行：
+
+```bash
+python scripts/narrative_engine.py gate --project <项目目录> --chapter <章节号>
+```
+
+执行要求：
+- 若 `08-叙事引擎报告.md` 出现 FAIL：先修复，再重跑。
+- 若出现 WARN：在交付说明中明确列出。
+- 门禁通过后再按“回复格式”输出正文与同步更新摘要。
 
 ## 写作技法库（必须按需参考）
 `references/writing-techniques/` 内的文件为写作技法总库。触发相关任务时必须读取对应文件，而不是只依赖默认模板。
@@ -122,8 +177,9 @@ python scripts/foreshadow_stats.py --csv <项目目录>/05-长线伏笔.csv --ou
 按以下顺序输出，保证用户先拿到正文：
 1. `正文成稿`
 2. `本轮同步更新`（总大纲/子大纲/设定集）
-3. `伏笔统计摘要`（引用 `06-长线统计.md` 核心数字）
-4. `角色状态更新摘要`（引用 `07-当前角色状态.md` 的关键变化）
+3. `门禁结果`（引用 `08-叙事引擎报告.md` 的 PASS/WARN/FAIL 总数）
+4. `伏笔统计摘要`（引用 `06-长线统计.md` 核心数字）
+5. `角色状态更新摘要`（引用 `07-当前角色状态.md` 的关键变化）
 
 如果输出格式不满足用户需求，则迭代直到满足为止。
 
@@ -135,3 +191,4 @@ python scripts/foreshadow_stats.py --csv <项目目录>/05-长线伏笔.csv --ou
 - 需要理解伏笔字段时读取 `references/foreshadow-schema.md`。
 - 需要维护角色状态与行动模式时读取 `references/character-state-template.md`。
 - 需要写作技法时按任务读取 `references/writing-techniques/*.md` 对应文件。
+- 需要执行章节门禁或构建写作上下文时读取 `scripts/narrative_engine.py` 的命令帮助。

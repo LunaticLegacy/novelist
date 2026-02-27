@@ -17,7 +17,10 @@ PROJECT_README = """# 项目说明
 6. 记录并统计长线伏笔（05、06）
 7. 维护当前角色状态与行动模式（07）
 
-建议每次新增章节后都更新一次 `05-长线伏笔.csv` 并重新生成 `06-长线统计.md`。
+建议每次开工前后执行：
+- 写前体检：`python scripts/narrative_engine.py doctor --project .`
+- 写前上下文：`python scripts/narrative_engine.py context --project . --chapter <章节号> --create-chapter`
+- 交付门禁：`python scripts/narrative_engine.py gate --project . --chapter <章节号>`
 """
 
 FILE_TEMPLATE_MAP = {

@@ -4,6 +4,8 @@
 
 `总大纲 -> 子大纲 -> 风格卡 -> 正文 -> 设定集 -> 伏笔统计`
 
+并提供章节级“叙事引擎”脚本，支持项目体检、写前上下文构建、交付前门禁验收。
+
 ## 适用场景
 
 - 写中文长篇网文/小说
@@ -48,6 +50,21 @@ python webnovel-outline-suboutline-draft-zh/scripts/init_story_workspace.py --ro
 - `正文/第NNN章.md`
 - `04-设定集.md`
 - `05-长线伏笔.csv`
+
+4. 使用叙事引擎命令形成闭环：
+
+```bash
+# 项目体检
+python webnovel-outline-suboutline-draft-zh/scripts/narrative_engine.py doctor --project <项目目录>
+
+# 写前准备（自动生成本章上下文）
+python webnovel-outline-suboutline-draft-zh/scripts/narrative_engine.py context --project <项目目录> --chapter <章节号> --create-chapter
+
+# 交付前门禁（自动刷新长线统计并生成门禁报告）
+python webnovel-outline-suboutline-draft-zh/scripts/narrative_engine.py gate --project <项目目录> --chapter <章节号>
+```
+
+`gate` 会输出 `08-叙事引擎报告.md`。只要有 `FAIL`，建议先修复再交付。
 
 ## 伏笔统计命令
 

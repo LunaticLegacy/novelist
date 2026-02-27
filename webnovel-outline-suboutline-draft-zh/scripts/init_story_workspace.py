@@ -15,6 +15,7 @@ PROJECT_README = """# 项目说明
 4. 在 `正文/` 目录逐章输出正文
 5. 同步维护设定集（04）
 6. 记录并统计长线伏笔（05、06）
+7. 维护当前角色状态与行动模式（07）
 
 建议每次新增章节后都更新一次 `05-长线伏笔.csv` 并重新生成 `06-长线统计.md`。
 """
@@ -24,6 +25,7 @@ FILE_TEMPLATE_MAP = {
     "02-子大纲.md": "suboutline-template.md",
     "04-设定集.md": "setting-bible-template.md",
     "05-长线伏笔.csv": "foreshadow-template.csv",
+    "07-当前角色状态.md": "character-state-template.md",
 }
 
 CHAPTERS_DIR = "正文"

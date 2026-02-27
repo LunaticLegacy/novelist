@@ -1,4 +1,4 @@
 ﻿interface:
   display_name: "Layered Webnovel Writing"
-  short_description: "Layered webnovel writing with style and foreshadow tracking"
-  default_prompt: "Work in one folder: build outline and sub-outline, derive a style card from style references, write chapter drafts, and update setting plus foreshadow stats."
+  short_description: "Layered webnovel writing with style, foreshadow, and character-state tracking"
+  default_prompt: "Work in one folder: build outline and sub-outline, derive a style card from style references, write chapter drafts, and update setting, character state, plus foreshadow stats."

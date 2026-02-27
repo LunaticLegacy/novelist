@@ -33,7 +33,22 @@ novelist/
   正文/                                    # 你的项目内容（示例）
 ```
 
-## 快速开始
+## 快速开始（人类阅读）
+
+> 人类需要阅读本节，LLM不需要。
+
+经过个人测试，个人推荐使用如下指令：
+
+```plaintext
+现在，先为我生成 1~32 章的内容。对于每一章均要求：
+需要逐章节生成。在每一章生成结束后，必须保证所有状态、伏笔被落盘。如果章节情况不满足全局设置，则迭代这些章节、扩增字数，直到满足。
+这会是一个很漫长的工作。
+上述条件全部满足后进入下一章。
+```
+
+## 快速开始（LLM 阅读）
+
+> LLM 需要阅读本节，人类不需要。
 
 1. 准备环境：`Python 3.9+`
 2. 初始化一个新作品目录：
@@ -67,7 +82,9 @@ python webnovel-outline-suboutline-draft-zh/scripts/narrative_engine.py gate --p
 
 `gate` 会输出 `08-叙事引擎报告.md`。只要有 `FAIL`，建议先修复再交付。
 
-## 伏笔统计命令
+## 伏笔统计命令（LLM 阅读）
+
+> LLM 需要阅读本节，人类不需要。下同。
 
 更新 `05-长线伏笔.csv` 后执行：
 
@@ -85,7 +102,7 @@ python webnovel-outline-suboutline-draft-zh/scripts/foreshadow_stats.py \
 - 未完成清单
 - 逾期待回收清单（提供 `--current-chapter` 时）
 
-## 伏笔 CSV 字段
+## 伏笔 CSV 字段（LLM 阅读）
 
 表头固定为：
 
@@ -98,7 +115,7 @@ python webnovel-outline-suboutline-draft-zh/scripts/foreshadow_stats.py \
 - `已回收`
 - `弃用`
 
-## 建议工作方式
+## 建议工作方式（LLM 阅读）
 
 - 每新增一章就同步更新一次设定与伏笔
 - 每次改动 `05-长线伏笔.csv` 后立即重建 `06-长线统计.md`

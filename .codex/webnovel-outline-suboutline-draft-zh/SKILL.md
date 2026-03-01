@@ -37,6 +37,8 @@ python scripts/init_story_workspace.py --root <父目录> --name <作品名>
 - `正文/`（正文章节目录）
 - `正文/第001章.md`（首章模板）
 
+所有文件的编码均为`UTF-8`。
+
 初始化后，先执行一次项目体检：
 
 ```bash

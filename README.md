@@ -25,12 +25,12 @@
 
 ```text
 novelist/
-  webnovel-outline-suboutline-draft-zh/   # Skill 本体（SKILL.md、scripts、templates）
-  references/                             # 补充写作技法参考
-  大纲和子大纲/                            # 你的项目内容（示例）
-  设定集/                                  # 你的项目内容（示例）
-  风格参考/                                # 你的项目内容（示例）
-  正文/                                    # 你的项目内容（示例）
+├── webnovel-outline-suboutline-draft-zh/   # Skill 本体（SKILL.md、scripts、templates）
+├── references/                             # 补充写作技法参考
+├── 大纲和子大纲/                            # 你的项目内容（示例）
+├── 设定集/                                  # 你的项目内容（示例）
+├── 风格参考/                                # 你的项目内容（示例）
+└── 正文/                                    # 你的项目内容（示例）
 ```
 
 ## 快速开始（人类阅读）

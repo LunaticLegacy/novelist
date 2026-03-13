@@ -1,0 +1,7 @@
+interface:
+  display_name: "Novelist"
+  short_description: "中文网文分层大纲、章节起草、设定同步与门禁验收工作流"
+  default_prompt: "Use $novelist to plan and write a Chinese web novel project with synced outlines, style card, settings, character state, and foreshadow tracking."
+
+policy:
+  allow_implicit_invocation: true

@@ -2,55 +2,21 @@
 from __future__ import annotations
 
 import argparse
-import csv
-import re
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
-REQUIRED_COLUMNS = [
-    "id",
-    "主线",
-    "伏笔内容",
-    "首次埋设章节",
-    "计划回收章节",
-    "实际回收章节",
-    "状态",
-    "关联人物",
-    "备注",
-]
+from common import (
+    DONE_STATUSES,
+    INACTIVE_STATUSES,
+    REQUIRED_COLUMNS,
+    extract_chapter_num,
+    load_rows,
+    normalize_status,
+    safe_cell,
+)
 
-DONE_STATUSES = {"已回收"}
-INACTIVE_STATUSES = {"弃用"}
 DEFAULT_OUTFILE = "06-长线统计.md"
-
-
-def normalize_status(value: str) -> str:
-    text = (value or "").strip()
-    return text if text else "未标注"
-
-
-def extract_chapter_num(value: str) -> int | None:
-    text = (value or "").strip()
-    if not text:
-        return None
-    match = re.search(r"\d+", text)
-    return int(match.group()) if match else None
-
-
-def safe_cell(value: str) -> str:
-    return (value or "").replace("|", "\\|").strip()
-
-
-def load_rows(csv_path: Path) -> list[dict[str, str]]:
-    with csv_path.open("r", encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        if reader.fieldnames is None:
-            raise ValueError("CSV 为空或缺少表头。")
-        missing = [col for col in REQUIRED_COLUMNS if col not in reader.fieldnames]
-        if missing:
-            raise ValueError(f"CSV 缺少字段: {', '.join(missing)}")
-        return [dict(row) for row in reader]
 
 
 def build_markdown(rows: list[dict[str, str]], current_chapter: int | None) -> str:

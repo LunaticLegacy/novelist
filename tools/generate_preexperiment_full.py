@@ -505,27 +505,36 @@ def enforce_length(chapters: dict[int, dict[str, str]]) -> list[tuple[int, int]]
             deduped.append(part)
 
         text = "\n\n".join(deduped).rstrip() + "\n"
+        current_count = count_non_ws(text)
+
         idx = 0
-        while count_non_ws(text) < 3500 and idx < 24:
+        while current_count < 3500 and idx < 24:
             idx += 1
             ext = scene_extension(chapter, chapters[chapter], idx)
             if ext in seen:
                 continue
             seen.add(ext)
+            added = count_non_ws("\n\n" + ext)
             text = text.rstrip() + "\n\n" + ext + "\n"
+            current_count += added
 
         pad_i = 0
-        while count_non_ws(text) < 3500 and pad_i < 10:
+        while current_count < 3500 and pad_i < 10:
             pad_i += 1
             pad = final_padding(chapter, pad_i)
             if pad in seen:
                 continue
             seen.add(pad)
+            added = count_non_ws("\n\n" + pad)
             text = text.rstrip() + "\n\n" + pad + "\n"
+            current_count += added
 
-        if count_non_ws(text) > 4500:
+        if current_count > 4500:
             trimmed = [part.strip() for part in text.split("\n\n") if part.strip()]
-            while len(trimmed) > 1 and count_non_ws("\n\n".join(trimmed) + "\n") > 4500:
+            trimmed_counts = [count_non_ws(p) for p in trimmed]
+            total = sum(trimmed_counts)
+            while len(trimmed) > 1 and total > 4500:
+                total -= trimmed_counts.pop()
                 trimmed.pop()
             text = "\n\n".join(trimmed).rstrip() + "\n"
 

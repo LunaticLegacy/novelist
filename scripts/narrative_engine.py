@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import re
 import subprocess
 import sys
@@ -19,21 +18,6 @@ REQUIRED_FILES = [
     "07-当前角色状态.md",
 ]
 REQUIRED_DIRS = ["正文", "风格参考"]
-REQUIRED_COLUMNS = [
-    "id",
-    "主线",
-    "伏笔内容",
-    "首次埋设章节",
-    "计划回收章节",
-    "实际回收章节",
-    "状态",
-    "关联人物",
-    "备注",
-]
-
-DONE_STATUSES = {"已回收"}
-INACTIVE_STATUSES = {"弃用"}
-
 CHAPTER_FILE_RE = re.compile(r"^第(\d{3})章\.md$")
 CHAPTER_HEADING_RE = re.compile(r"^(?:#{1,6}\s*)?第\s*0*(\d+)\s*章[^\n]*", re.M)
 FORESHADOW_ID_RE = re.compile(r"\bF\d{3}\b")
@@ -60,29 +44,17 @@ class CheckResult:
     detail: str
 
 
-def normalize_status(value: str) -> str:
-    text = (value or "").strip()
-    return text if text else "未标注"
-
-
-def normalize_id(value: str) -> str:
-    return (value or "").strip().upper()
-
-
-def extract_chapter_num(value: str) -> int | None:
-    text = (value or "").strip()
-    if not text:
-        return None
-    match = re.search(r"\d+", text)
-    return int(match.group()) if match else None
-
-
-def safe_cell(value: str) -> str:
-    return (value or "").replace("|", "\\|").strip()
-
-
-def count_non_whitespace(text: str) -> int:
-    return len(re.sub(r"\s+", "", text))
+from common import (
+    DONE_STATUSES,
+    INACTIVE_STATUSES,
+    REQUIRED_COLUMNS,
+    count_non_whitespace,
+    extract_chapter_num,
+    load_rows,
+    normalize_id,
+    normalize_status,
+    safe_cell,
+)
 
 
 def chapter_file(project_dir: Path, chapter: int) -> Path:
@@ -103,17 +75,6 @@ def storyboard_file(project_dir: Path, chapter: int) -> Path:
 
 def read_utf8(path: Path) -> str:
     return path.read_text(encoding="utf-8")
-
-
-def load_rows(csv_path: Path) -> list[dict[str, str]]:
-    with csv_path.open("r", encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        if reader.fieldnames is None:
-            raise ValueError("CSV 为空或缺少表头。")
-        missing = [col for col in REQUIRED_COLUMNS if col not in reader.fieldnames]
-        if missing:
-            raise ValueError(f"CSV 缺少字段: {', '.join(missing)}")
-        return [dict(row) for row in reader]
 
 
 def collect_chapter_files(chapters_dir: Path) -> tuple[dict[int, Path], list[Path]]:

@@ -452,33 +452,35 @@ def build_chapter(ch: int) -> str:
     )
 
     text = "\n\n".join(lines).rstrip() + "\n"
+    current_count = count_non_ws(text)
 
     ext_i = 0
     used_ext = set()
-    while count_non_ws(text) < 3500 and ext_i < 40:
+    while current_count < 3500 and ext_i < 40:
         ext = extension_paragraph(ch, ext_i, meta)
         ext_i += 1
         if ext in used_ext:
             continue
         used_ext.add(ext)
+        added = count_non_ws("\n\n" + ext)
         text = text.rstrip() + "\n\n" + ext + "\n"
+        current_count += added
 
     pad_i = 0
-    while count_non_ws(text) < 3500:
+    while current_count < 3500:
         pad_i += 1
-        text = (
-            text.rstrip()
-            + "\n\n"
-            + f"她把当日晚间补录样本记为补丁{pad_i}，只写原句、位置和动作，不加推论。"
-            + "\n"
-        )
+        pad_text = f"她把当日晚间补录样本记为补丁{pad_i}，只写原句、位置和动作，不加推论。"
+        text = text.rstrip() + "\n\n" + pad_text + "\n"
+        current_count += count_non_ws("\n\n" + pad_text)
 
-    while count_non_ws(text) > 4500:
-        parts = [p for p in text.strip().split("\n\n") if p.strip()]
-        if len(parts) <= 1:
-            break
+    parts = [p for p in text.strip().split("\n\n") if p.strip()]
+    part_counts = [count_non_ws(p) for p in parts]
+    total_count = sum(part_counts)
+    while total_count > 4500 and len(parts) > 1:
+        removed = part_counts.pop()
         parts.pop()
-        text = "\n\n".join(parts).strip() + "\n"
+        total_count -= removed
+    text = "\n\n".join(parts).strip() + "\n"
 
     return text
 
